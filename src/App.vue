@@ -3,13 +3,13 @@ import { ref } from "vue";
 import Dialog from "./components/Dialog.vue";
 import Form from "./components/Form.vue";
 
-const showRegisterDialog = ref(true);
-const showLoginDialog = ref(false);
+const initiator = ref("Иван");
+const nameCollection = ref("Экскурсия");
 </script>
 
 <template>
   <main>
-    <Form />
+    <Form :initiator="initiator" :nameCollection="nameCollection" />
   </main>
 
   <!-- <Dialog v-model="showRegisterDialog"> Registration </Dialog>

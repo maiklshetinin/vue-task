@@ -56,3 +56,18 @@ export const validateCardNumber = (rule, cardNumber, callback) => {
     callback(new Error("Номер карты не соответствует ЛУН алгоритму"));
   }
 };
+
+export const inputNumberFormatter = (value) => value.replace(/\D/g, "");
+
+export const formatCurrency = (value) => {
+  // Удаляем все нецифровые символы
+  const cleanedValue = value.replace(/\D/g, "");
+
+  // Если очищенное значение пустое, возвращаем пустую строку
+  if (!cleanedValue) {
+    return "";
+  }
+
+  // Добавляем знак рубля к числовому значению
+  return `${cleanedValue} ₽`;
+};
