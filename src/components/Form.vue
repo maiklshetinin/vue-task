@@ -1,11 +1,16 @@
 <script setup>
 import { reactive, ref } from "vue";
-import { formatterTerm, formatterCard } from "../utils/validators";
+import {
+  formatterTerm,
+  formatterCard,
+  validateCardNumber,
+} from "../utils/validators";
+import { ElNotification } from "element-plus";
 
 const formRef = ref(null);
 
 const formInit = {
-  card: null, //Номер карты
+  cardNumber: null, //Номер карты
   term: null, //Срок действия
   cvv: null, //CVV
   amount: null, //Сумма платежа в рублях
@@ -17,34 +22,40 @@ const form = reactive({ ...formInit });
 
 const rules = reactive({
   //-- Номер карты
-  card: {
-    required: true,
-    message: "Обязательное поле",
-  },
+  cardNumber: [
+    {
+      required: true,
+      message: "Введите номер карты",
+    },
+    {
+      validator: (rule, value, callback) => {
+        validateCardNumber(rule, value, callback);
+      },
+    },
+  ],
   //--Срок действия
   term: {
     required: true,
-    message: "Обязательное поле",
+    message: "Введите срок",
   },
-
   //-- CVV
   cvv: {
     required: true,
-    message: "Обязательное поле",
+    message: "Введите CVV",
   },
   //-- Сумма перевода
   amount: {
     required: true,
-    message: "Обязательное поле",
+    message: "Введите сумму",
   },
   //-- Ваше имя
   name: {
     required: true,
-    message: "Обязательное поле",
+    message: "Введите имя",
   },
   //-- Сообщение получателю
   message: {
-    required: true,
+    required: false,
     message: "Обязательное поле",
   },
 });
@@ -70,16 +81,24 @@ const submitForm = (formEl) => {
     label-position="top"
     :size="formSize"
   >
-    <el-form-item label="Номер карты" prop="card">
+    <el-form-item
+      label="Номер карты"
+      prop="cardNumber"
+      class="remove-required-star"
+    >
       <el-input
-        v-model="form.card"
-        @input="formatterCard($event, form, 'card')"
+        v-model="form.cardNumber"
+        @input="formatterCard($event, form, 'cardNumber')"
         :maxlength="19"
       />
     </el-form-item>
 
     <div class="flex">
-      <el-form-item label="Срок действия" prop="term">
+      <el-form-item
+        label="Срок действия"
+        prop="term"
+        class="remove-required-star"
+      >
         <el-input
           v-model="form.term"
           placeholder="ММ/ГГ"
@@ -88,16 +107,20 @@ const submitForm = (formEl) => {
         />
       </el-form-item>
 
-      <el-form-item label="CVV" prop="cvv">
+      <el-form-item label="CVV" prop="cvv" class="remove-required-star">
         <el-input v-model="form.cvv" :show-password="true" :maxlength="4" />
       </el-form-item>
     </div>
 
-    <el-form-item label="Сумма перевода" prop="amount">
+    <el-form-item
+      label="Сумма перевода"
+      prop="amount"
+      class="remove-required-star"
+    >
       <el-input v-model="form.amount" />
     </el-form-item>
 
-    <el-form-item label="Ваше имя" prop="name">
+    <el-form-item label="Ваше имя" prop="name" class="remove-required-star">
       <el-input v-model="form.name" />
     </el-form-item>
 
