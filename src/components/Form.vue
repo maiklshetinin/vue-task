@@ -104,7 +104,7 @@ const submitForm = (formEl) => {
         transaction: "3243243244324",
         description: "описание_платежа",
         api_key: apiKey,
-        amount: inputNumberFormatter(form.amount),
+        amount: +inputNumberFormatter(form.amount),
         email: "электронная_почта",
         custom_data: {
           initiator: props.initiator,
@@ -116,6 +116,7 @@ const submitForm = (formEl) => {
       const formattedData = JSON.stringify(body, null, 2);
 
       ElMessageBox({
+        customClass: "message-box",
         title: "Данные запроса",
         message: h("p", null, [
           h("span", null, "Отправленные данные:"),
@@ -130,7 +131,7 @@ const submitForm = (formEl) => {
         ]),
       });
 
-      sum.value = form.amount;
+      sum.value = `${form.amount}₽`;
     } else {
       return false;
     }
@@ -149,6 +150,12 @@ const resetForm = () => {
   setTimeout(() => {
     formRef.value.clearValidate();
   }, 0);
+};
+
+const onKeydown = (event) => {
+  if (event.key === "Backspace") {
+    form.amount = form.amount.slice(0, -1);
+  }
 };
 </script>
 
@@ -205,7 +212,12 @@ const resetForm = () => {
       prop="amount"
       class="remove-required-star"
     >
-      <el-input v-model="form.amount" :formatter="formatCurrency" />
+      <el-input
+        v-model="form.amount"
+        :formatter="formatCurrency"
+        :parser="inputNumberFormatter"
+        @keydown="onKeydown"
+      />
     </el-form-item>
 
     <el-form-item label="Ваше имя" prop="name" class="remove-required-star">
@@ -265,5 +277,14 @@ const resetForm = () => {
 
 .el-form-item__label-wrap {
   margin: 0;
+}
+
+.message-box {
+  --el-messagebox-width: 62% !important; /* Установите желаемую ширину */
+}
+
+.el-button,
+.el-button.is-round {
+  padding: 18px 15px !important;
 }
 </style>

@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from "vue";
-import Dialog from "./components/Dialog.vue";
 import Form from "./components/Form.vue";
 
 const initiator = ref("Иван");
@@ -9,16 +8,7 @@ const sum = ref("");
 </script>
 
 <template>
-  <main>
-    <Form
-      v-model="sum"
-      :initiator="initiator"
-      :nameCollection="nameCollection"
-    />
-  </main>
-
-  <!-- <Dialog v-model="showRegisterDialog"> Registration </Dialog>
-  <Dialog v-model="showLoginDialog"> Login </Dialog> -->
+  <Form v-model="sum" :initiator="initiator" :nameCollection="nameCollection" />
 </template>
 
 <style scoped></style>
