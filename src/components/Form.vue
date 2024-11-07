@@ -15,6 +15,8 @@ const props = defineProps({
   nameCollection: String,
 });
 
+const sum = defineModel();
+
 const formRef = ref(null);
 
 const formInit = {
@@ -52,10 +54,22 @@ const rules = reactive({
     message: "Введите CVV",
   },
   //-- Сумма перевода
-  amount: {
-    required: true,
-    message: "Введите сумму",
-  },
+  amount: [
+    {
+      required: true,
+      message: "Введите сумму",
+    },
+    {
+      validator: (rule, value, callback) => {
+        const amount = inputNumberFormatter(value);
+        if (amount < 10) {
+          callback(new Error("не менее 10 руб"));
+        } else {
+          callback();
+        }
+      },
+    },
+  ],
   //-- Ваше имя
   name: {
     required: true,
@@ -75,7 +89,7 @@ const submitForm = (formEl) => {
     if (valid) {
       const apiKey = "316b2be8-3475-4462-bd57-c7794d4bdb53";
       const transaction = "ваша_транзакция";
-      const amount = 100.5; // Сумма в рублях
+      const amount = form.amount; // Сумма в рублях
       const secretKey = "1234567890";
 
       const signature = await generateSignature(
@@ -90,7 +104,7 @@ const submitForm = (formEl) => {
         transaction: "3243243244324",
         description: "описание_платежа",
         api_key: apiKey,
-        amount: form.amount,
+        amount: inputNumberFormatter(form.amount),
         email: "электронная_почта",
         custom_data: {
           initiator: props.initiator,
@@ -115,10 +129,26 @@ const submitForm = (formEl) => {
           ),
         ]),
       });
+
+      sum.value = form.amount;
     } else {
       return false;
     }
   });
+};
+
+const resetForm = () => {
+  sum.value = "";
+  form.cardNumber = null; //Номер карты
+  form.term = null; //Срок действия
+  form.cvv = null; //CVV
+  form.amount = null; //Сумма платежа в рублях
+  form.name = null; //Ваше имя
+  form.message = null; //Сообщение получателю
+
+  setTimeout(() => {
+    formRef.value.clearValidate();
+  }, 0);
 };
 </script>
 
@@ -132,7 +162,7 @@ const submitForm = (formEl) => {
     label-position="top"
     :size="formSize"
   >
-    <h3>{{ initiator }} собирает на {{ nameCollection }}</h3>
+    <h3>{{ initiator }} собирает {{ sum }} на {{ nameCollection }}</h3>
     <el-form-item
       label="Номер карты"
       prop="cardNumber"
@@ -190,7 +220,7 @@ const submitForm = (formEl) => {
       <el-button type="primary" @click="submitForm(formRef)"
         >Перевести</el-button
       >
-      <el-button>Вернуться</el-button>
+      <el-button @click="resetForm">Вернуться</el-button>
     </el-form-item>
   </el-form>
 </template>

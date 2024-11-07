@@ -5,11 +5,16 @@ import Form from "./components/Form.vue";
 
 const initiator = ref("Иван");
 const nameCollection = ref("Экскурсия");
+const sum = ref("");
 </script>
 
 <template>
   <main>
-    <Form :initiator="initiator" :nameCollection="nameCollection" />
+    <Form
+      v-model="sum"
+      :initiator="initiator"
+      :nameCollection="nameCollection"
+    />
   </main>
 
   <!-- <Dialog v-model="showRegisterDialog"> Registration </Dialog>
