@@ -6,6 +6,7 @@ import {
   validateCardNumber,
   inputNumberFormatter,
   formatCurrency,
+  generateSignature,
 } from "../utils/validators";
 import { ElMessageBox } from "element-plus";
 
@@ -67,34 +68,28 @@ const rules = reactive({
   },
 });
 
-// const submitForm = (formEl) => {
-//   if (!formEl) return;
-//   formEl.validate((valid) => {
-//     if (valid) {
-//       ElMessageBox({
-//         title: "Body post запроса",
-//         message: h("p", null, [
-//           h("span", null, "Message can be"),
-//           h("i", { style: "color: teal" }, "VNode"),
-//         ]),
-//       });
-//     } else {
-//       return false;
-//     }
-//   });
-// };
-
 const submitForm = (formEl) => {
   if (!formEl) return;
 
-  formEl.validate((valid) => {
+  formEl.validate(async (valid) => {
     if (valid) {
+      const apiKey = "316b2be8-3475-4462-bd57-c7794d4bdb53";
+      const transaction = "ваша_транзакция";
+      const amount = 100.5; // Сумма в рублях
+      const secretKey = "1234567890";
+
+      const signature = await generateSignature(
+        apiKey,
+        transaction,
+        amount,
+        secretKey
+      );
+
       const body = {
-        hash_sum:
-          "14d85e69dc948e2f04e7494e4f5cdbc89ec2a19d30900c180516098ad365bedb",
+        hash_sum: signature,
         transaction: "3243243244324",
         description: "описание_платежа",
-        api_key: "fcee9d8e-cf54-4e88-8911-517b6708367b",
+        api_key: apiKey,
         amount: form.amount,
         email: "электронная_почта",
         custom_data: {

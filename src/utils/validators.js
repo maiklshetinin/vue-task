@@ -71,3 +71,28 @@ export const formatCurrency = (value) => {
   // Добавляем знак рубля к числовому значению
   return `${cleanedValue} ₽`;
 };
+
+export const generateSignature = async (
+  apiKey,
+  transaction,
+  amount,
+  secretKey
+) => {
+  const amountInCents = Math.floor(amount * 100);
+  const dataToSign = `${apiKey}${transaction}${amountInCents}${secretKey}`;
+
+  // Кодируем строку в Uint8Array
+  const encoder = new TextEncoder();
+  const data = encoder.encode(dataToSign);
+
+  // Генерируем хеш SHA-256
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+
+  // Преобразуем хеш в шестнадцатеричную строку
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray
+    .map((b) => ("00" + b.toString(16)).slice(-2))
+    .join("");
+
+  return hashHex;
+};
